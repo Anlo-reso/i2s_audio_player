@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" role="img" aria-label="Wiring diagram: Arduino Nano ESP32 connected to a PCM5102 DAC and speaker, a button on D8, and a new white LED on D6" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTowZjNkN2I5ZS0zNzY3LTRhMTYtODAzZC1kYjRjOTg1MGY4ZmMAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaFrKVAiyJFn8LypwXyfZxkgAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDoxNzMzMWYwZC1kMzMyLTQ1NDktYmUyOC1iMjE0MzI3ZTM4YjdscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNozcllvIpnuDWSBsgYv7hc/wAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggXkJUc4idBTUku0MTlGT1zNy+/rYU8mvYIFOLzWeQkBmkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaAUBmZo+EFoq9aKBkT0yMZ8AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRMAAAAAAAAAAAAAAAAZGhhc2hYIPpby3TiV85xvJUNhrIqz7xWbmzYfLqpmSHecQ7N97rnZG5hbWVuanVtYmYgbWFuaWZlc3RqZXhjbHVzaW9uc4GiZXN0YXJ0GQELZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjBmM2Q3YjllLTM3NjctNGExNi04MDNkLWRiNGM5ODUwZjhmYy9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjA0YzRkNWNlLWI5MDAtNGMzNy04NjRlLWJhOGUxYWM0NTgyMnJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCBeQlRziJ0FNSS7QxOUZPXM3L7+thTya9ggU4vNZ5CQGaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFgg9TqwVCOIZP+sy7EvCqTCaLj0H8GEbTp8l5zshPQ+u9uiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggyFABInuCxIh9XyTXGL8glkuuIZYPM0ZgJPNOFg4vKqx0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQMAPoRn+6ORrAbzTf688ai4QROCYlCRGyjGI1JZ9A+xI8xv0ZcUi4tN/WFeyqrneosYWpD3bI/bD+KL8hh4b7b4=</c2pa:manifest></metadata>
+  <title>i2s_audio_player wiring diagram</title>
+  <desc>Nano ESP32 pins 3V3, GND, D2, D3, D5, D6, D8 wired to a PCM5102 DAC (VIN, GND, BCK, LCK, DIN), a powered speaker, a momentary button, and a white status LED that lights while a clip plays.</desc>
+
+  <defs>
+    <g id="gnd">
+      <line x1="0" y1="0" x2="0" y2="8"/>
+      <line x1="-10" y1="8" x2="10" y2="8"/>
+      <line x1="-6" y1="13" x2="6" y2="13"/>
+      <line x1="-3" y1="18" x2="3" y2="18"/>
+    </g>
+  </defs>
+
+  <rect x="0" y="0" width="1000" height="700" fill="#ffffff"/>
+
+  <!-- Titles -->
+  <text x="500" y="34" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#24292f">i2s_audio_player — wiring diagram</text>
+  <text x="500" y="56" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#57606a">Nano ESP32 → PCM5102 DAC (OUTPUT_BOARD = 1) + button + white playback LED</text>
+
+  <g font-family="Helvetica, Arial, sans-serif" stroke="#24292f" stroke-width="2" fill="none">
+
+    <!-- Nano ESP32 box -->
+    <rect x="40" y="150" width="200" height="360" rx="8"/>
+    <g stroke="none" fill="#24292f">
+      <text x="140" y="130" text-anchor="middle" font-size="15" font-weight="700">Arduino Nano ESP32</text>
+      <text x="140" y="176" text-anchor="middle" font-size="11" fill="#57606a">(needs PSRAM)</text>
+    </g>
+
+    <!-- Nano pins: dots + labels -->
+    <g stroke="none" fill="#24292f" font-size="13">
+      <circle cx="240" cy="210" r="3"/><text x="228" y="214" text-anchor="end">3V3</text>
+      <circle cx="240" cy="250" r="3"/><text x="228" y="254" text-anchor="end">GND</text>
+      <circle cx="240" cy="290" r="3"/><text x="228" y="294" text-anchor="end">D2</text>
+      <circle cx="240" cy="330" r="3"/><text x="228" y="334" text-anchor="end">D3</text>
+      <circle cx="240" cy="370" r="3"/><text x="228" y="374" text-anchor="end">D5</text>
+      <circle cx="240" cy="420" r="3"/><text x="228" y="424" text-anchor="end">D6</text>
+      <circle cx="240" cy="470" r="3"/><text x="228" y="474" text-anchor="end">D8</text>
+    </g>
+
+    <!-- PCM5102 box -->
+    <rect x="460" y="150" width="220" height="360" rx="8"/>
+    <g stroke="none" fill="#24292f">
+      <text x="570" y="130" text-anchor="middle" font-size="15" font-weight="700">PCM5102 / PCM5100 DAC</text>
+      <text x="570" y="176" text-anchor="middle" font-size="11" fill="#57606a">(stereo, line-level — no built-in amp)</text>
+    </g>
+
+    <!-- PCM5102 left pins -->
+    <g stroke="none" fill="#24292f" font-size="13">
+      <circle cx="460" cy="210" r="3"/><text x="472" y="214">VIN</text>
+      <circle cx="460" cy="250" r="3"/><text x="472" y="254">GND</text>
+      <circle cx="460" cy="290" r="3"/><text x="472" y="294">BCK</text>
+      <circle cx="460" cy="330" r="3"/><text x="472" y="334">LCK</text>
+      <circle cx="460" cy="370" r="3"/><text x="472" y="374">DIN</text>
+    </g>
+
+    <!-- straight wires Nano -> PCM5102 -->
+    <line x1="240" y1="210" x2="460" y2="210"/>
+    <line x1="240" y1="250" x2="460" y2="250"/>
+    <line x1="240" y1="290" x2="460" y2="290"/>
+    <line x1="240" y1="330" x2="460" y2="330"/>
+    <line x1="240" y1="370" x2="460" y2="370"/>
+
+    <!-- I2S bus bracket + labels -->
+    <path d="M348,282 L342,282 L342,378 L348,378"/>
+    <g stroke="none" fill="#57606a" font-size="10">
+      <text x="350" y="284" text-anchor="start">bit clock</text>
+      <text x="350" y="324" text-anchor="start">word select</text>
+      <text x="350" y="364" text-anchor="start">audio data</text>
+    </g>
+    <text x="326" y="334" text-anchor="middle" font-size="11" fill="#57606a" transform="rotate(-90 326 334)">I2S bus</text>
+
+    <!-- PCM5102 bottom straps (fixed, always the same) -->
+    <g font-size="11" stroke="none" fill="#24292f">
+      <text x="490" y="495" text-anchor="middle">XSMT</text>
+      <text x="530" y="495" text-anchor="middle">SCK</text>
+      <text x="570" y="495" text-anchor="middle">FMT</text>
+      <text x="610" y="495" text-anchor="middle">FLT</text>
+      <text x="650" y="495" text-anchor="middle">DEMP</text>
+    </g>
+    <line x1="490" y1="510" x2="490" y2="545"/>
+    <line x1="530" y1="510" x2="530" y2="542"/>
+    <line x1="570" y1="510" x2="570" y2="542"/>
+    <line x1="610" y1="510" x2="610" y2="542"/>
+    <line x1="650" y1="510" x2="650" y2="542"/>
+    <circle cx="490" cy="545" r="3" stroke="none" fill="#24292f"/>
+    <text x="502" y="549" font-size="11" stroke="none" fill="#24292f">3V3 (un-mutes the chip)</text>
+    <use href="#gnd" transform="translate(530,542)"/>
+    <use href="#gnd" transform="translate(570,542)"/>
+    <use href="#gnd" transform="translate(610,542)"/>
+    <use href="#gnd" transform="translate(650,542)"/>
+    <text x="590" y="578" text-anchor="middle" font-size="10" stroke="none" fill="#57606a">SCK / FMT / FLT / DEMP all tie to GND</text>
+
+    <!-- PCM5102 right pins -->
+    <g stroke="none" fill="#24292f" font-size="13">
+      <circle cx="680" cy="230" r="3"/><text x="692" y="234">L</text>
+      <circle cx="680" cy="270" r="3"/><text x="692" y="274">R</text>
+      <circle cx="680" cy="310" r="3"/><text x="692" y="314">GND</text>
+    </g>
+    <line x1="680" y1="230" x2="800" y2="230"/>
+    <line x1="680" y1="270" x2="800" y2="270"/>
+    <line x1="680" y1="310" x2="800" y2="310"/>
+
+    <!-- Speaker box -->
+    <rect x="800" y="200" width="160" height="170" rx="8"/>
+    <g stroke="none" fill="#24292f">
+      <text x="880" y="185" text-anchor="middle" font-size="15" font-weight="700">Powered speaker</text>
+    </g>
+    <g stroke="none" fill="#24292f" font-size="13">
+      <circle cx="800" cy="230" r="3"/><text x="812" y="234">L</text>
+      <circle cx="800" cy="270" r="3"/><text x="812" y="274">R</text>
+      <circle cx="800" cy="310" r="3"/><text x="812" y="314">GND</text>
+    </g>
+    <text x="880" y="350" text-anchor="middle" font-size="10.5" stroke="none" fill="#57606a">(or MAX98357A + speaker — see code)</text>
+
+    <!-- Button branch -->
+    <line x1="240" y1="470" x2="330" y2="470"/>
+    <line x1="330" y1="470" x2="330" y2="505"/>
+    <rect x="310" y="505" width="40" height="25" rx="4"/>
+    <line x1="330" y1="530" x2="330" y2="565"/>
+    <use href="#gnd" transform="translate(330,565)"/>
+    <g stroke="none" fill="#24292f" font-size="12">
+      <text x="358" y="500">button</text>
+      <text x="358" y="516" fill="#57606a" font-size="10.5">D8 → GND</text>
+      <text x="358" y="530" fill="#57606a" font-size="10.5">(internal pull-up,</text>
+      <text x="358" y="542" fill="#57606a" font-size="10.5">no resistor needed)</text>
+    </g>
+
+  </g>
+
+  <!-- LED branch: highlighted as the new addition -->
+  <g font-family="Helvetica, Arial, sans-serif">
+    <text x="350" y="400" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b45309">white LED — on while playing</text>
+    <g stroke="#b45309" stroke-width="2.5" fill="none">
+      <line x1="240" y1="420" x2="300" y2="420"/>
+      <rect x="300" y="412" width="42" height="16"/>
+      <line x1="342" y1="420" x2="368" y2="420"/>
+      <polygon points="368,406 368,434 402,420" fill="none"/>
+      <line x1="406" y1="406" x2="406" y2="434"/>
+      <line x1="406" y1="420" x2="425" y2="420"/>
+      <line x1="425" y1="420" x2="425" y2="450"/>
+      <use href="#gnd" transform="translate(425,450)"/>
+    </g>
+    <g stroke="none" fill="#b45309" font-size="10.5">
+      <text x="321" y="443" text-anchor="middle">220Ω</text>
+      <text x="382" y="402" text-anchor="middle" font-size="10">+</text>
+      <text x="406" y="402" text-anchor="middle" font-size="10">–</text>
+    </g>
+  </g>
+
+  <!-- Caption -->
+  <g font-family="Helvetica, Arial, sans-serif" font-size="12.5" fill="#24292f">
+    <text x="40" y="650">D6 → 220&#8486; resistor → LED anode (+). LED cathode (–) → GND. Everything shown is for OUTPUT_BOARD = 1 (PCM5102/PCM5100).</text>
+    <text x="40" y="670" fill="#57606a">All the GND points above are one shared net — tie them to the same ground rail on the breadboard.</text>
+  </g>
+</svg>
