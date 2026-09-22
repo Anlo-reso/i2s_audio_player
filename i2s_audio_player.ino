@@ -30,11 +30,18 @@
       steady on       playing
       fast flicker    a clip is arriving
 
+  What the ring tells you (a CJMCU-2812 / WS2812B ring, 12 pixels):
+      breathing white   a clip has arrived and nobody has opened it yet
+      steady white      that clip has been opened at least once
+      off               nothing stored at all
+
   Board:  Arduino Nano ESP32 (needs PSRAM).
-  Parts:  an I2S output board, a speaker. Playback is triggered entirely over
-          WiFi by the recorder's cube-position messages — see CUBE_OPEN_LO/HI
-          and CUBE_LISTEN_LO/HI below. Set OUTPUT_BOARD below to whichever
-          output board you have.
+  Parts:  an I2S output board, a speaker, a CJMCU-2812 (WS2812B) LED ring.
+          Playback is triggered entirely over WiFi by the recorder's
+          cube-position messages — see CUBE_OPEN_LO/HI and CUBE_LISTEN_LO/HI
+          below. Set OUTPUT_BOARD below to whichever output board you have.
+          The ring needs the "Adafruit NeoPixel" library — Library Manager,
+          search for it, install it.
 
   Wiring — MAX98357A (mono amplifier, drives a speaker directly):
       Nano ESP32       MAX98357A
@@ -66,6 +73,15 @@
       Nano ESP32       LED
       D6   ────────── 220Ω resistor ── LED anode (long leg, +)
       GND  ────────── LED cathode (short leg, –)
+
+  Wiring — CJMCU-2812 / WS2812B LED ring (12 pixels, "breathing" indicator):
+      Nano ESP32       Ring
+      VBUS ──────────  VCC   (5 V, but ONLY on USB power — see README)
+      GND  ──────────  GND
+      D8   ──────────  IN    (a 300–500Ω resistor in series is good practice,
+                               not strictly required for a short wire)
+      Leave the ring's OUT/VCC/GND pins unconnected — those are only for
+      chaining a second ring on.
 */
 
 #include <Arduino.h>
@@ -81,6 +97,7 @@
 
 #include <ESP_I2S.h>
 #include <WiFi.h>
+#include <Adafruit_NeoPixel.h>
 
 // ---------- things you might want to change ----------
 
@@ -93,6 +110,17 @@ const int I2S_WS   = D3;      // to amp LRC
 const int I2S_DOUT = D5;      // to amp DIN
 
 const int LED_PLAY_PIN = D6;   // white LED: on while a clip is playing, off otherwise
+
+const int      RING_PIN       = D8;   // data line to the ring's IN pin
+const uint16_t RING_LED_COUNT = 12;   // pixels on the CJMCU-2812 ring
+
+// The ring's brightness breathes between these two levels while a clip is
+// waiting to be opened, and settles at RING_STEADY_BRIGHTNESS once it has
+// been opened at least once. All out of 255.
+const uint8_t        RING_BREATH_MIN        = 8;
+const uint8_t        RING_BREATH_MAX        = 160;
+const uint8_t        RING_STEADY_BRIGHTNESS = 140;
+const unsigned long  RING_BREATH_PERIOD_MS  = 4000;   // one full in-and-out cycle
 
 // The recorder's rotary cube sensor reports a raw reading in one of three
 // bands. This board only ever acts on two of them — RECORD is listed purely
@@ -149,6 +177,7 @@ static uint8_t rawOut[PLAY_CHUNK * 4];
 
 I2SClass  i2s;
 WiFiServer server(LINK_PORT);
+Adafruit_NeoPixel ring(RING_LED_COUNT, RING_PIN, NEO_GRB + NEO_KHZ800);
 
 // Two buffers, so a clip that arrives half way through does not destroy the
 // one we already have. We only swap them once the whole thing is safely here.
@@ -162,6 +191,8 @@ size_t playPos = WAV_HEADER_BYTES;
 // The cube, as last reported by the recorder.
 bool cubeOpen    = false;   // is the latest reading inside the OPEN band right now?
 bool listenArmed = false;   // was the last non-open reading inside the LISTEN band?
+
+bool clipUnheard = false;   // a clip has arrived that nobody has opened yet
 
 // ---------------------------------------------------------------------------
 
@@ -181,6 +212,13 @@ void setup() {
 
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_PLAY_PIN, OUTPUT);
+
+  ring.begin();
+  for (uint16_t i = 0; i < RING_LED_COUNT; i++) {
+    ring.setPixelColor(i, ring.Color(255, 255, 255));   // white; brightness does the rest
+  }
+  ring.setBrightness(0);
+  ring.show();
 
   if (ESP.getPsramSize() == 0) {
     haltWith("No PSRAM. Check the board really is an Arduino Nano ESP32.");
@@ -218,6 +256,7 @@ void loop() {
   servePlayback();
   showStatusOnLed();
   updatePlayLed();
+  updateRing();
 }
 
 // ---------------------------------------------------------------------------
@@ -301,6 +340,7 @@ void receiveClip(WiFiClient &client) {
     clip      = incoming;
     incoming  = previous;
     clipBytes = want;
+    clipUnheard = true;         // new clip — the ring should start breathing
 
     client.write('K');
     client.flush();
@@ -381,6 +421,7 @@ void startPlayback() {
   }
   playPos = WAV_HEADER_BYTES;
   playing = true;
+  clipUnheard = false;          // being opened right now — ring goes steady
   Serial.printf("playing %.1f seconds%s\n",
                 (clipBytes - WAV_HEADER_BYTES) / (float)BYTES_PER_SECOND,
                 LOOP_FOREVER ? ", looping until the cube closes" : "");
@@ -437,6 +478,30 @@ void showStatusOnLed() {
 // carries the fuller status code (waiting for a clip / arriving / playing).
 void updatePlayLed() {
   digitalWrite(LED_PLAY_PIN, playing ? HIGH : LOW);
+}
+
+// The ring: off with nothing stored, breathing while a stored clip is still
+// unheard, steady once it has been opened. Throttled to ~33 updates/sec —
+// smooth enough for the eye, and it keeps ring.show()'s brief interrupt-off
+// window from firing on every single loop() pass while audio is streaming.
+void updateRing() {
+  static unsigned long lastUpdateMs = 0;
+  if (millis() - lastUpdateMs < 30) return;
+  lastUpdateMs = millis();
+
+  uint8_t brightness;
+  if (clipBytes <= WAV_HEADER_BYTES) {
+    brightness = 0;
+  } else if (clipUnheard) {
+    float phase = (millis() % RING_BREATH_PERIOD_MS) / (float)RING_BREATH_PERIOD_MS;
+    float wave  = (sin(phase * 2 * PI) + 1.0) / 2.0;   // 0..1, slow in-and-out
+    brightness  = RING_BREATH_MIN + (uint8_t)(wave * (RING_BREATH_MAX - RING_BREATH_MIN));
+  } else {
+    brightness = RING_STEADY_BRIGHTNESS;
+  }
+
+  ring.setBrightness(brightness);
+  ring.show();
 }
 
 void haltWith(const char *message) {
