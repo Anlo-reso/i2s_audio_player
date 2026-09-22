@@ -3,30 +3,38 @@
   SKETCH B — THE PLAYER (the object with the speaker)
 
   This board makes its own small WiFi network and waits. When the recorder
-  sends a clip, it lands in PSRAM and stays there. Nothing is heard until
-  somebody presses the button — then it plays the clip through once and stops,
-  ready to be pressed again. Pressing it while it is playing stops it.
+  sends a clip, it lands in PSRAM and stays there. Nothing is heard until the
+  recorder reports that the cube has been opened while it was dialled to
+  LISTEN — then the clip plays through once and stops. Any other reading
+  that arrives while it is playing (including the cube closing again) stops
+  it early, the same as if it had simply finished.
+
+  There is no button on this board any more: the recorder owns the cube's
+  rotary sensor and pushes readings over WiFi, and this board decides what
+  they mean. See "Receiving" below for the two message types.
 
   Keeping the arrival silent is deliberate: the object holds what it was given
   until a person asks for it, rather than announcing itself in an empty room.
 
   It is the player that runs the network, not the recorder, and that is on
-  purpose: it means the recorder can simply push a finished clip at a fixed
-  address the moment it has one. Nobody has to poll, and nothing has to know
-  anybody's IP address.
+  purpose: it means the recorder can simply push a finished clip — or a cube
+  reading — at a fixed address the moment it has one. Nobody has to poll, and
+  nothing has to know anybody's IP address.
 
   Do A_bench_test first. It proves the amplifier and speaker work without any
   of this.
 
   What the LED tells you:
       slow blink      no clip yet — nothing to play
-      off             a clip is loaded and waiting for a press
+      off             a clip is loaded and waiting for the cube to open
       steady on       playing
       fast flicker    a clip is arriving
 
   Board:  Arduino Nano ESP32 (needs PSRAM).
-  Parts:  an I2S output board, a speaker, a button between D8 and GND.
-          Set OUTPUT_BOARD below to whichever one you have.
+  Parts:  an I2S output board, a speaker. Playback is triggered entirely over
+          WiFi by the recorder's cube-position messages — see CUBE_OPEN_LO/HI
+          and CUBE_LISTEN_LO/HI below. Set OUTPUT_BOARD below to whichever
+          output board you have.
 
   Wiring — MAX98357A (mono amplifier, drives a speaker directly):
       Nano ESP32       MAX98357A
@@ -52,8 +60,6 @@
                        FLT, DEMP ── GND
                        L / R / GND ──> powered speaker, or an amplifier
       This chip CANNOT drive a speaker. See the README.
-
-      button:  D8 ── button ── GND
 
   Wiring — white "now playing" LED (optional, on its own pin so it is
   independent of the LED_BUILTIN status codes above):
@@ -86,16 +92,21 @@ const int I2S_BCLK = D2;      // to amp BCLK
 const int I2S_WS   = D3;      // to amp LRC
 const int I2S_DOUT = D5;      // to amp DIN
 
-const int BUTTON_PIN = D8;
-
 const int LED_PLAY_PIN = D6;   // white LED: on while a clip is playing, off otherwise
+
+// The recorder's rotary cube sensor reports a raw reading in one of three
+// bands. This board only ever acts on two of them — RECORD is listed purely
+// so the bands read as one shared protocol with the recorder's own code.
+const uint16_t CUBE_RECORD_LO = 800,  CUBE_RECORD_HI = 1200;   // not used here
+const uint16_t CUBE_OPEN_LO   = 2700, CUBE_OPEN_HI   = 3100;
+const uint16_t CUBE_LISTEN_LO = 3900, CUBE_LISTEN_HI = 4300;
 
 const uint32_t SAMPLE_RATE = 16000;   // must match the recorder
 const uint32_t MAX_SECONDS = 60;      // must be at least what the recorder sends
 
-// What a button press does.
-//   false  play the clip through once, then stop. Press again to hear it again.
-//   true   keep looping until the button is pressed a second time.
+// What opening the cube does while playback is already running.
+//   false  play the clip through once, then stop. Open it again to hear it again.
+//   true   keep looping until the cube closes.
 const bool LOOP_FOREVER = false;
 
 // How loud the output is. 1.0 is full scale.
@@ -123,9 +134,10 @@ const size_t WAV_HEADER_BYTES = 44;
 const size_t BYTES_PER_SECOND = SAMPLE_RATE * 2;
 const size_t CLIP_CAPACITY    = WAV_HEADER_BYTES + BYTES_PER_SECOND * MAX_SECONDS;
 
-// 64 ms of audio per write. This number IS the stop-button latency: the button
-// is read once per chunk, so a smaller chunk means a snappier stop and more
-// trips round the loop. Below about 512 it starts to stutter.
+// 64 ms of audio per write. This number IS the stop latency: a cube-closed
+// message is only acted on once per chunk, so a smaller chunk means a
+// snappier stop and more trips round the loop. Below about 512 it starts to
+// stutter.
 const size_t PLAY_CHUNK = 2048;
 
 const unsigned long RECEIVE_TIMEOUT_MS = 10000;   // silence before we give up
@@ -147,8 +159,9 @@ size_t   clipBytes = 0;
 bool   playing = false;
 size_t playPos = WAV_HEADER_BYTES;
 
-unsigned long lastButtonChangeMs = 0;
-const unsigned long DEBOUNCE_MS = 30;
+// The cube, as last reported by the recorder.
+bool cubeOpen    = false;   // is the latest reading inside the OPEN band right now?
+bool listenArmed = false;   // was the last non-open reading inside the LISTEN band?
 
 // ---------------------------------------------------------------------------
 
@@ -166,7 +179,6 @@ void setup() {
   while (!Serial && millis() - serialWaitStart < 2000) { }
   delay(100);   // the port is open; give the monitor a moment to start listening
 
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(LED_PLAY_PIN, OUTPUT);
 
@@ -202,8 +214,7 @@ void setup() {
 }
 
 void loop() {
-  handleButton();
-  acceptIncomingClip();
+  acceptIncomingMessage();
   servePlayback();
   showStatusOnLed();
   updatePlayLed();
@@ -212,27 +223,53 @@ void loop() {
 // ---------------------------------------------------------------------------
 // Receiving
 //
-// On the wire:  "TUI1" | 4-byte length, smallest byte first | that many bytes
-// and we answer with one byte: 'K' if we got it all, 'X' if we did not.
+// Every connection starts with a 4-byte magic. Two kinds arrive on the same
+// port:
+//
+//   "TUI1" | 4-byte length, smallest byte first | that many bytes of clip
+//   — a finished recording. We answer 'K' if we got it all, 'X' if not.
+//
+//   "TUI2" | 2-byte cube reading, smallest byte first
+//   — the recorder's rotary sensor, sent whenever it changes. We answer 'K'
+//   once we've read it. See CUBE_OPEN_LO/HI and CUBE_LISTEN_LO/HI above for
+//   what the reading means.
 
-void acceptIncomingClip() {
+void acceptIncomingMessage() {
   WiFiClient client = server.available();
   if (!client) return;
 
-  Serial.println("someone is connecting");
-  playing = false;                     // go quiet while the new one arrives
-
-  uint8_t head[8];
-  if (!readExactly(client, head, 8) || memcmp(head, "TUI1", 4) != 0) {
-    Serial.println("not one of ours, ignoring");
+  uint8_t magic[4];
+  if (!readExactly(client, magic, 4)) {
+    Serial.println("connection dropped before we saw a full header, ignoring");
     client.stop();
     return;
   }
 
-  size_t want = (size_t)head[4]
-              | ((size_t)head[5] <<  8)
-              | ((size_t)head[6] << 16)
-              | ((size_t)head[7] << 24);
+  if (memcmp(magic, "TUI1", 4) == 0) {
+    receiveClip(client);
+  } else if (memcmp(magic, "TUI2", 4) == 0) {
+    receiveCubeState(client);
+  } else {
+    Serial.println("not one of ours, ignoring");
+    client.stop();
+  }
+}
+
+void receiveClip(WiFiClient &client) {
+  Serial.println("someone is connecting with a clip");
+  playing = false;                     // go quiet while the new one arrives
+
+  uint8_t lenBytes[4];
+  if (!readExactly(client, lenBytes, 4)) {
+    Serial.println("clip header cut off, ignoring");
+    client.stop();
+    return;
+  }
+
+  size_t want = (size_t)lenBytes[0]
+              | ((size_t)lenBytes[1] <<  8)
+              | ((size_t)lenBytes[2] << 16)
+              | ((size_t)lenBytes[3] << 24);
 
   if (want <= WAV_HEADER_BYTES || want > CLIP_CAPACITY) {
     Serial.printf("clip is %u bytes, which does not fit — refusing\n", (unsigned)want);
@@ -267,13 +304,55 @@ void acceptIncomingClip() {
 
     client.write('K');
     client.flush();
-    Serial.printf(" — ok, %.1f seconds. Stored. Press the button to play it.\n",
+    Serial.printf(" — ok, %.1f seconds. Stored. Open the cube on LISTEN to play it.\n",
                   (want - WAV_HEADER_BYTES) / (float)BYTES_PER_SECOND);
   } else {
     client.write('X');
     client.flush();
     Serial.printf(" — only %u arrived, keeping the old clip\n", (unsigned)got);
   }
+  client.stop();
+}
+
+// A cube-position update from the recorder. We only track two things from
+// it: whether the cube is open right now, and whether the last time it was
+// NOT open, it was dialled to LISTEN. Opening the cube while armed to listen
+// starts playback; any reading that isn't "still open" while playing stops
+// it — including the cube closing again.
+void receiveCubeState(WiFiClient &client) {
+  uint8_t valueBytes[2];
+  if (!readExactly(client, valueBytes, 2)) {
+    Serial.println("cube-state message cut off, ignoring");
+    client.stop();
+    return;
+  }
+  uint16_t value = (uint16_t)valueBytes[0] | ((uint16_t)valueBytes[1] << 8);
+
+  bool wasOpen = cubeOpen;
+  cubeOpen = (value >= CUBE_OPEN_LO && value <= CUBE_OPEN_HI);
+
+  if (!cubeOpen) {
+    // Not in the open band right now, so this reading tells us the mode the
+    // cube is dialled to. Only LISTEN matters here — anything else
+    // (RECORD, or values in between) disarms playback until LISTEN shows up
+    // again.
+    listenArmed = (value >= CUBE_LISTEN_LO && value <= CUBE_LISTEN_HI);
+  }
+
+  if (cubeOpen && !wasOpen) {
+    if (listenArmed && !playing) {
+      Serial.println("cube opened on LISTEN");
+      startPlayback();
+    } else if (!listenArmed) {
+      Serial.println("cube opened, but not armed to listen — ignoring");
+    }
+  } else if (!cubeOpen && wasOpen && playing) {
+    playing = false;
+    Serial.println("cube closed — stopped");
+  }
+
+  client.write('K');
+  client.flush();
   client.stop();
 }
 
@@ -294,8 +373,9 @@ bool readExactly(WiFiClient &client, uint8_t *into, size_t count) {
 
 void startPlayback() {
   if (clipBytes <= WAV_HEADER_BYTES) {
-    // Worth saying out loud: a button that does nothing looks broken, and
-    // "no clip yet" is the commonest reason for it on the first afternoon.
+    // Worth saying out loud: a cube that opens and nothing happens looks
+    // broken, and "no clip yet" is the commonest reason for it on the first
+    // afternoon.
     Serial.println("nothing stored yet — record something and send it first");
     return;
   }
@@ -303,7 +383,7 @@ void startPlayback() {
   playing = true;
   Serial.printf("playing %.1f seconds%s\n",
                 (clipBytes - WAV_HEADER_BYTES) / (float)BYTES_PER_SECOND,
-                LOOP_FOREVER ? ", looping until you press again" : "");
+                LOOP_FOREVER ? ", looping until the cube closes" : "");
 }
 
 void servePlayback() {
@@ -342,36 +422,7 @@ void servePlayback() {
 }
 
 // ---------------------------------------------------------------------------
-// The button: plays the stored clip, or stops it if it is already playing.
-// Nothing plays on its own — arriving over the network only fills PSRAM.
-
-void handleButton() {
-  static bool wasDown = false;
-  bool isDown = buttonIsDown();
-
-  if (isDown && !wasDown) {            // only act on the moment it goes down
-    if (playing) {
-      playing = false;
-      Serial.println("stopped");
-    } else {
-      startPlayback();
-    }
-  }
-  wasDown = isDown;
-}
-
-// ---------------------------------------------------------------------------
 // Helpers
-
-bool buttonIsDown() {
-  static bool stable = false;
-  bool now = (digitalRead(BUTTON_PIN) == LOW);
-  if (now != stable && millis() - lastButtonChangeMs > DEBOUNCE_MS) {
-    stable = now;
-    lastButtonChangeMs = millis();
-  }
-  return stable;
-}
 
 void showStatusOnLed() {
   if (clipBytes <= WAV_HEADER_BYTES) {
